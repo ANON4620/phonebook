@@ -75,6 +75,7 @@ void list()
 
 	file = fopen(DATAFILE, "r");
 
+	puts("RECORD\tNAME\tPHONE");
 	for(int i = 1; ; i++)
 	{
 		err = fscanf(file, "%s %lu", contact.name, &(contact.phone));
