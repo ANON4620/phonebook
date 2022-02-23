@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define DB "db.dat"
+#define DATAFILE "file.dat"
 
 struct NewContact
 {
@@ -70,52 +70,52 @@ int main()
 void list()
 {
 	struct NewContact contact;
-	FILE *db;
+	FILE *file;
 	int err;
 
-	db = fopen(DB, "r");
+	file = fopen(DATAFILE, "r");
 
 	for(int i = 1; ; i++)
 	{
-		err = fscanf(db, "%s %lu", contact.name, &(contact.phone));
+		err = fscanf(file, "%s %lu", contact.name, &(contact.phone));
                 if(err == EOF)
 			break;
 		printf("[%d]\t%s\t%lu\n", i, contact.name, contact.phone);
 	}
 
-	fclose(db);
+	fclose(file);
 }
 
 void add()
 {
 	struct NewContact contact;
-	FILE *db;
+	FILE *file;
 
 	printf("Name: ");
 	scanf("%s", contact.name);
 	printf("Phone no: ");
 	scanf("%lu", &(contact.phone));
 
-	db = fopen(DB, "a");
-	fprintf(db, "%s %lu\n", contact.name, contact.phone);
-	fclose(db);
+	file = fopen(DATAFILE, "a");
+	fprintf(file, "%s %lu\n", contact.name, contact.phone);
+	fclose(file);
 }
 
 void delete()
 {
         struct NewContact contact;
-	FILE *db, *new;
+	FILE *file, *new;
 	int n, err;
 
         printf("Record no: ");
         scanf("%d", &n);
 
-	db = fopen(DB, "r");
+	file = fopen(DATAFILE, "r");
 	new = fopen("new.dat", "a");
 	
 	for(int i = 1; ; i++)
 	{
-		err = fscanf(db, "%s %lu", contact.name, &(contact.phone));
+		err = fscanf(file, "%s %lu", contact.name, &(contact.phone));
 		if(err == EOF)
 			break;
 		if(i == n)
@@ -123,17 +123,17 @@ void delete()
 		fprintf(new, "%s %lu\n", contact.name, contact.phone);
 	}
 
-	fclose(db);
+	fclose(file);
 	fclose(new);
 	
-	remove(DB);
-	rename("new.dat", DB);
+	remove(DATAFILE);
+	rename("new.dat", DATAFILE);
 }
 
 void edit()
 {
 	struct NewContact edit, contact;
-	FILE *db, *new;
+	FILE *file, *new;
         int n, err;
 
         printf("Record no: ");
@@ -143,12 +143,12 @@ void edit()
         printf("Phone no: ");
 	scanf("%lu", &(edit.phone));
 
-	db = fopen(DB, "r");
+	file = fopen(DATAFILE, "r");
         new = fopen("new.dat", "a");
 
         for(int i = 1; ; i++)
         {
-		err = fscanf(db, "%s %lu", contact.name, &(contact.phone));
+		err = fscanf(file, "%s %lu", contact.name, &(contact.phone));
                 if(err == EOF)
                         break;
                 if(i == n)
@@ -159,9 +159,9 @@ void edit()
                 fprintf(new, "%s %lu\n", contact.name, contact.phone);
 	}
 	
-	fclose(db);
+	fclose(file);
 	fclose(new);
 
-	remove(DB);
-        rename("new.dat", DB);
+	remove(DATAFILE);
+        rename("new.dat", DATAFILE);
 }
