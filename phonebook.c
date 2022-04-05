@@ -1,13 +1,10 @@
-#include <stdio.h>
+#include <ncurses.h>
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-
 #define DATAFILE "file.dat"
 
 struct NewContact
 {
-	char name[20];
+	char name[21];
 	unsigned long phone;
 };
 
@@ -20,19 +17,24 @@ int main()
 
 	int n;
 
-	while(true)
-	{
-		putchar('\n');
-		puts("[1] List");
-		puts("[2] Add");
-		puts("[3] Edit");
-		puts("[4] Delete");
-		puts("[5] Exit");
-		putchar('\n');
+	initscr();
 
-		printf(">> ");
-		scanf("%d", &n);
-		putchar('\n');
+	while(TRUE)
+	{
+		erase();
+
+		addch('\n');
+		addstr("[1] List\n");
+		addstr("[2] Add\n");
+		addstr("[3] Edit\n");
+		addstr("[4] Delete\n");
+		addstr("[5] Search\n");
+		addstr("[6] Exit\n");
+		addch('\n');
+
+		addstr(">> ");
+		scanw("%d", &n);
+		addch('\n');
 
 		switch(n)
 		{
@@ -44,24 +46,23 @@ int main()
 				break;
 			case 3:
 				list();
-				putchar('\n');
 				edit();
 				break;
 			case 4:
 				list();
-				putchar('\n');
 				delete();
 				break;
 			case 5:
+				addstr("This feature is under development.");
+				break;
+			case 6:
+				endwin();
 				exit(EXIT_SUCCESS);
 			default:
-				puts("Invalid input!");
+				addstr("Invalid input!\n");
 		}
-
-		putchar('\n');
-		printf("[Press Enter to continue]");
-		getchar();
-		getchar();
+		addstr("\n[Press any key to continue]");
+		getch();
 	}
 
 	return 0;
@@ -75,16 +76,17 @@ void list()
 
 	file = fopen(DATAFILE, "r");
 
-	puts("RECORD\tNAME\tPHONE");
+	addstr("RECORD, NAME, PHONE\n\n");
 	for(int i = 1; ; i++)
 	{
 		err = fscanf(file, "%s %lu", contact.name, &(contact.phone));
                 if(err == EOF)
 			break;
-		printf("[%d]\t%s\t%lu\n", i, contact.name, contact.phone);
+		printw("[%d], %s, %lu\n", i, contact.name, contact.phone);
 	}
 
 	fclose(file);
+	addch('\n');
 }
 
 void add()
@@ -92,10 +94,10 @@ void add()
 	struct NewContact contact;
 	FILE *file;
 
-	printf("Name: ");
-	scanf("%s", contact.name);
-	printf("Phone no: ");
-	scanf("%lu", &(contact.phone));
+	addstr("Name: ");
+	getnstr(contact.name, 20);
+	addstr("Phone no: ");
+	scanw("%lu", &(contact.phone));
 
 	file = fopen(DATAFILE, "a");
 	fprintf(file, "%s %lu\n", contact.name, contact.phone);
@@ -108,8 +110,8 @@ void delete()
 	FILE *file, *new;
 	int n, err;
 
-        printf("Record no: ");
-        scanf("%d", &n);
+        addstr("Record no: ");
+        scanw("%d", &n);
 
 	file = fopen(DATAFILE, "r");
 	new = fopen("new.dat", "a");
@@ -137,12 +139,12 @@ void edit()
 	FILE *file, *new;
         int n, err;
 
-        printf("Record no: ");
-        scanf("%d", &n);
-	printf("Name: ");
-        scanf("%s", edit.name);
-        printf("Phone no: ");
-	scanf("%lu", &(edit.phone));
+        addstr("Record no: ");
+        scanw("%d", &n);
+	addstr("Name: ");
+        getnstr(edit.name, 20);
+        addstr("Phone no: ");
+	scanw("%lu", &(edit.phone));
 
 	file = fopen(DATAFILE, "r");
         new = fopen("new.dat", "a");
